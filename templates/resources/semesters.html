@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resource_name }} - {{ department.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'departments' %}">Departments</a></li>
+            <li class="breadcrumb-item">
+                {% if resource.resource_type == 'notes' %}
+                    <a href="{% url 'notes_department' resource.department.id %}">{{ resource.department.name }}</a>
+                {% elif resource.resource_type == 'handwritten' %}
+                    <a href="{% url 'handwritten_department' resource.department.id %}">{{ resource.department.name }}</a>
+                {% elif resource.resource_type == 'insight' %}
+                    <a href="{% url 'insight_department' resource.department.id %}">{{ resource.department.name }}</a>
+                {% elif resource.resource_type == 'syllabus' %}
+                    <a href="{% url 'syllabus_department' resource.department.id %}">{{ resource.department.name }}</a>
+                {% endif %}
+            </li>
+            <li class="breadcrumb-item">
+                {% if resource.resource_type == 'notes' %}
+                    <a href="{% url 'notes_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                {% elif resource.resource_type == 'handwritten' %}
+                    <a href="{% url 'handwritten_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                {% elif resource.resource_type == 'insight' %}
+                    <a href="{% url 'insights_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                {% elif resource.resource_type == 'syllabus' %}
+                    <a href="{% url 'syllabus_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                {% endif %}
+            </li>
+            <li class="breadcrumb-item active">{{ resource.title }}</li>
+        </ol>
+    </nav>
+    
+    <h1 class="text-center mb-4">{{ resource_name }} - {{ department.name }}</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for semester in semesters %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title">Semester {{ semester.number }}</h4>
+                        {% if resource_type == 'notes' %}
+                            <a href="{% url 'notes_list' department.id semester.id %}" class="btn btn-primary mt-3">Browse Notes</a>
+                        {% elif resource_type == 'handwritten' %}
+                            <a href="{% url 'handwritten_list' department.id semester.id %}" class="btn btn-success mt-3">Browse Handwritten Notes</a>
+                        {% elif resource_type == 'insight' %}
+                            <a href="{% url 'insights_list' department.id semester.id %}" class="btn btn-warning mt-3">Browse Insights</a>
+                        {% elif resource_type == 'syllabus' %}
+                            <a href="{% url 'syllabus_list' department.id semester.id %}" class="btn btn-info mt-3">Browse Syllabus</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

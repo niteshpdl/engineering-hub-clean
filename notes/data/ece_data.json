@@ -1,0 +1,45 @@
+{
+    "department": {
+        "name": "Electronics, Communication and Information Engineering",
+        "short_name": "ECE",
+        "num_semesters": 8,
+        "description": "Bachelor's program in Electronics, Communication and Information Engineering"
+    },
+    "semesters": [
+        {
+            "number": 6,
+            "subjects": [
+                {
+                    "name": "Communication English",
+                    "code": "SH601",
+                    "credit_hours": 3.0
+                },
+                {
+                    "name": "Embedded System",
+                    "code": "CT655",
+                    "credit_hours": 3.0
+                },
+                {
+                    "name": "Antenna and Propagation",
+                    "code": "EX653",
+                    "credit_hours": 3.0
+                },
+                {
+                    "name": "Minor Project",
+                    "code": "EX654",
+                    "credit_hours": 2.0
+                },
+                {
+                    "name": "Communication System",
+                    "code": "EX652",
+                    "credit_hours": 3.0
+                },
+                {
+                    "name": "Object Oriented Software Engineering",
+                    "code": "CSC161",
+                    "credit_hours": 3.0
+                }
+            ]
+        }
+    ]
+}

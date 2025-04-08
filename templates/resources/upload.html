@@ -1,0 +1,149 @@
+<form method="post" action="{% url 'upload_resource' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- Resource Type -->
+    <div class="mb-3">
+        <label for="resource_type" class="form-label">Resource Type *</label>
+        <select class="form-select" id="resource_type" name="resource_type" required>
+            <option value="" selected disabled>Select resource type</option>
+            <option value="notes">Notes</option>
+            <option value="handwritten">Handwritten Notes</option>
+            <option value="insight">Insight</option>
+            <option value="syllabus">Syllabus</option>
+        </select>
+    </div>
+    
+    <!-- Title -->
+    <div class="mb-3">
+        <label for="title" class="form-label">Title *</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    
+    <!-- Description -->
+    <div class="mb-3">
+        <label for="description" class="form-label">Description *</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+    </div>
+    
+    <!-- Department Selection -->
+    <div class="mb-3">
+        <label for="department" class="form-label">Department *</label>
+        <select class="form-select" id="department" name="department" required>
+            <option value="" selected disabled>Select department</option>
+            {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Semester Selection -->
+    <div class="mb-3">
+        <label for="semester" class="form-label">Semester *</label>
+        <select class="form-select" id="semester" name="semester" required>
+            <option value="" selected disabled>Select semester</option>
+            <!-- Populated via JavaScript -->
+        </select>
+    </div>
+    
+    <!-- File Upload -->
+    <div class="mb-3">
+        <label for="file" class="form-label">File *</label>
+        <input type="file" class="form-control" id="file" name="file" required>
+    </div>
+    
+    <!-- Thumbnail Upload (new field) -->
+    <div class="mb-3">
+        <label for="thumbnail" class="form-label">Thumbnail (Optional)</label>
+        <input type="file" class="form-control" name="thumbnail" id="thumbnail" accept="image/*">
+        <div class="form-text">Upload a thumbnail image to make your resource more attractive</div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-upload me-2"></i>Upload Resource
+        </button>
+    </div>
+</form>
+
+<!-- Debug element to show API response -->
+<div id="debug-output" style="display:none; margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Upload form script initialized");
+        const departmentSelect = document.getElementById('department');
+        const semesterSelect = document.getElementById('semester');
+        const debugOutput = document.getElementById('debug-output');
+        
+        // Helper function to show debug info
+        function showDebug(message, data = null) {
+            console.log(message, data);
+            if (debugOutput) {
+                let content = `<p>${message}</p>`;
+                if (data) {
+                    content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+                debugOutput.innerHTML = content;
+                debugOutput.style.display = 'block';
+            }
+        }
+        
+        if (departmentSelect && semesterSelect) {
+            showDebug("Form elements found and ready");
+            
+            departmentSelect.addEventListener('change', function() {
+                const departmentId = this.value;
+                const departmentName = this.options[this.selectedIndex].text;
+                
+                showDebug(`Department selected: ${departmentName} (ID: ${departmentId})`);
+                
+                if (!departmentId) {
+                    return;
+                }
+                
+                // Clear current semesters
+                semesterSelect.innerHTML = '<option value="">Loading...</option>';
+                
+                // Use the CORRECT URL pattern from your urls.py
+                const apiUrl = `/api/departments/${departmentId}/semesters/`;
+                showDebug(`Fetching from: ${apiUrl}`);
+                
+                // Fetch semesters for the selected department
+                fetch(apiUrl)
+                    .then(response => {
+                        showDebug(`API response status: ${response.status}`);
+                        if (!response.ok) {
+                            throw new Error(`Network error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        showDebug("API response data:", data);
+                        semesterSelect.innerHTML = '<option value="" selected disabled>Select semester</option>';
+                        
+                        if (data.semesters && data.semesters.length > 0) {
+                            showDebug(`Found ${data.semesters.length} semesters`);
+                            
+                            data.semesters.forEach(semester => {
+                                showDebug(`Adding semester ${semester.number} (ID: ${semester.id})`);
+                                const option = document.createElement('option');
+                                option.value = semester.id;
+                                option.textContent = `Semester ${semester.number}`;
+                                semesterSelect.appendChild(option);
+                            });
+                        } else {
+                            showDebug("No semesters found in response");
+                            semesterSelect.innerHTML = '<option value="" disabled>No semesters available</option>';
+                        }
+                    })
+                    .catch(error => {
+                        showDebug(`Error: ${error.message}`);
+                        semesterSelect.innerHTML = '<option value="" disabled>Error loading semesters</option>';
+                    });
+            });
+        } else {
+            showDebug("ERROR: Department or semester select elements not found");
+        }
+    });
+</script>

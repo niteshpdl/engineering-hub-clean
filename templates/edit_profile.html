@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4 text-center">
+                                <h5 class="mb-3">Profile Photo</h5>
+                                {% if user.user_profiles_profile.image %}
+                                    <img src="{{ user.user_profiles_profile.image.url }}" class="rounded-circle img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/150" class="rounded-circle img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                {% endif %}
+                                <div class="mb-3">
+                                    {{ p_form.image }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <h5 class="mb-3">Basic Information</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ u_form.username.id_for_label }}" class="form-label">Username</label>
+                                    {{ u_form.username }}
+                                    {% if u_form.username.errors %}
+                                        <div class="text-danger">{{ u_form.username.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ u_form.email.id_for_label }}" class="form-label">Email</label>
+                                    {{ u_form.email }}
+                                    {% if u_form.email.errors %}
+                                        <div class="text-danger">{{ u_form.email.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ u_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                            {{ u_form.first_name }}
+                                            {% if u_form.first_name.errors %}
+                                                <div class="text-danger">{{ u_form.first_name.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="{{ u_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                            {{ u_form.last_name }}
+                                            {% if u_form.last_name.errors %}
+                                                <div class="text-danger">{{ u_form.last_name.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ p_form.profession.id_for_label }}" class="form-label">Profession</label>
+                                    {{ p_form.profession }}
+                                    {% if p_form.profession.errors %}
+                                        <div class="text-danger">{{ p_form.profession.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ p_form.education.id_for_label }}" class="form-label">Education</label>
+                                    {{ p_form.education }}
+                                    {% if p_form.education.errors %}
+                                        <div class="text-danger">{{ p_form.education.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ p_form.address.id_for_label }}" class="form-label">Address</label>
+                            {{ p_form.address }}
+                            {% if p_form.address.errors %}
+                                <div class="text-danger">{{ p_form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ p_form.bio.id_for_label }}" class="form-label">Bio</label>
+                            {{ p_form.bio }}
+                            {% if p_form.bio.errors %}
+                                <div class="text-danger">{{ p_form.bio.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

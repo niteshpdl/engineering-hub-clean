@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Project{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'projects' %}">Projects</a></li>
+            <li class="breadcrumb-item active">Upload Project</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Upload Project</h2>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_title" class="form-label">Project Title <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="form-control" id="id_title" required>
+                    <div class="form-text">Enter a descriptive title for your project</div>
+                </div>
+                
+                <!-- In your form -->
+<div class="mb-3">
+    <label for="id_category" class="form-label">Project Category <span class="text-danger">*</span></label>
+    <select name="category" class="form-select" id="id_category" required>
+        <option value="" selected disabled>Select a project category</option>
+        {% for value, text in categories %}
+            <option value="{{ value }}">{{ text }}</option>
+        {% endfor %}
+    </select>
+    <div class="form-text">Choose the category that best fits your project</div>
+</div>
+
+                
+                <div class="mb-3">
+                    <label for="id_description" class="form-label">Description</label>
+                    <textarea name="description" class="form-control" id="id_description" rows="5"></textarea>
+                    <div class="form-text">Provide a detailed description of your project (optional)</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_team_members" class="form-label">Team Members</label>
+                    <input type="text" name="team_members" class="form-control" id="id_team_members">
+                    <div class="form-text">Enter team members separated by commas (optional)</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_supervisor" class="form-label">Supervisor</label>
+                    <input type="text" name="supervisor" class="form-control" id="id_supervisor">
+                    <div class="form-text">Enter project supervisor's name (optional)</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_documentation" class="form-label">Documentation <span class="text-danger">*</span></label>
+                    <input type="file" name="documentation" class="form-control" id="id_documentation" required>
+                    <div class="form-text">Upload your project documentation (PDF preferred)</div>
+                </div>
+                
+                <div class="text-end">
+                    <a href="{% url 'projects' %}" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Upload Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

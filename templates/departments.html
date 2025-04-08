@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resource_name }} - Departments{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{{ resource_name }} - Departments</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for department in departments %}
+            <div class="col">
+                <div class="card department-card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ department.name }}</h5>
+                        <p class="card-text">{{ department.description|truncatewords:20 }}</p>
+                        <a href="{% url resource_type|add:'_department' department.id %}" class="btn btn-primary">View Semesters</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

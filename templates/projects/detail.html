@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'projects' %}">Projects</a></li>
+                {% if project.category %}
+                <li class="breadcrumb-item"><a href="{% url 'project_list' project.category %}">
+                    {% if project.category == 'ai' %}AI Projects
+                    {% elif project.category == 'ml' %}ML Projects
+                    {% elif project.category == 'iot' %}IoT Projects
+                    {% elif project.category == 'major' %}Major Projects
+                    {% elif project.category == 'minor' %}Minor Projects
+                    {% else %}{{ project.category|title }} Projects{% endif %}
+                </a></li>
+                {% endif %}
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-white">
+            <h1 class="mb-0">{{ project.title }}</h1>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    {% if project.description %}
+                    <h4>Description</h4>
+                    <p class="lead">{{ project.description|linebreaks }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <h5>Uploaded By</h5>
+                        <p>{{ project.uploader.username }} on {{ project.uploaded_at|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Project Files</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if project.file %}
+                            <a href="{{ project.file.url }}" class="btn btn-primary btn-lg btn-block mb-3" target="_blank">
+                                <i class="fas fa-download"></i> Download Project File
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

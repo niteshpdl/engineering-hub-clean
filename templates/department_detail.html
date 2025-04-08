@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ department.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'departments' %}">Departments</a></li>
+                <li class="breadcrumb-item">
+                    {% if resource.resource_type == 'notes' %}
+                        <a href="{% url 'notes_department' resource.department.id %}">{{ resource.department.name }}</a>
+                    {% elif resource.resource_type == 'handwritten' %}
+                        <a href="{% url 'handwritten_department' resource.department.id %}">{{ resource.department.name }}</a>
+                    {% elif resource.resource_type == 'insight' %}
+                        <a href="{% url 'insight_department' resource.department.id %}">{{ resource.department.name }}</a>
+                    {% elif resource.resource_type == 'syllabus' %}
+                        <a href="{% url 'syllabus_department' resource.department.id %}">{{ resource.department.name }}</a>
+                    {% endif %}
+                </li>
+                <li class="breadcrumb-item">
+                    {% if resource.resource_type == 'notes' %}
+                        <a href="{% url 'notes_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                    {% elif resource.resource_type == 'handwritten' %}
+                        <a href="{% url 'handwritten_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                    {% elif resource.resource_type == 'insight' %}
+                        <a href="{% url 'insights_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                    {% elif resource.resource_type == 'syllabus' %}
+                        <a href="{% url 'syllabus_list' resource.department.id resource.semester.id %}">Semester {{ resource.semester.number }}</a>
+                    {% endif %}
+                </li>
+                <li class="breadcrumb-item active">{{ resource.title }}</li>
+            </ol>
+        </nav>
+        
+    </div>
+
+    <h1 class="text-center mb-5">{{ department.name }}</h1>
+    
+    {% if department.description %}
+    <div class="row mb-5">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Department Description</h5>
+                    <p class="card-text">{{ department.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-5">
+        <div class="col">
+            <h2 class="mb-4">Resources</h2>
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book fa-3x mb-3 text-primary"></i>
+                            <h3>Study Notes</h3>
+                            <p>{{ resources_by_type.notes }} resources available</p>
+                            <a href="{% url 'notes_department' department.id %}" class="btn btn-primary">Browse</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-pen fa-3x mb-3 text-success"></i>
+                            <h3>Handwritten Notes</h3>
+                            <p>{{ resources_by_type.handwritten }} resources available</p>
+                            <a href="{% url 'handwritten_department' department.id %}" class="btn btn-success">Browse</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-lightbulb fa-3x mb-3 text-warning"></i>
+                            <h3>Insights</h3>
+                            <p>{{ resources_by_type.insight }} resources available</p>
+                            <a href="{% url 'insights_department' department.id %}" class="btn btn-warning">Browse</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-list fa-3x mb-3 text-info"></i>
+                            <h3>Syllabus</h3>
+                            <p>{{ resources_by_type.syllabus }} resources available</p>
+                            <a href="{% url 'syllabus_department' department.id %}" class="btn btn-info text-white">Browse</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <h2 class="mb-4">Semesters</h2>
+            <div class="row">
+                {% for semester in semesters %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h3>Semester {{ semester.number }}</h3>
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="{% url 'notes_list' department.id semester.id %}" class="btn btn-sm btn-outline-primary">Notes</a>
+                                <a href="{% url 'handwritten_list' department.id semester.id %}" class="btn btn-sm btn-outline-success">Handwritten</a>
+                                <a href="{% url 'insights_list' department.id semester.id %}" class="btn btn-sm btn-outline-warning">Insights</a>
+                                <a href="{% url 'syllabus_list' department.id semester.id %}" class="btn btn-sm btn-outline-info">Syllabus</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

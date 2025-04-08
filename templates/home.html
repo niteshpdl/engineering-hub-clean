@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Engineering Hub - Your Academic Resource Center{% endblock %}
+
+{% block content %}
+<!-- Features Section -->
+<div class="container mb-5">
+    <h2 class="text-center mb-4">Explore Resources</h2>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-book feature-icon"></i>
+                    </div>
+                    <h4 class="card-title text-center">Study Notes</h4>
+                    <p class="card-text">Access comprehensive notes for all engineering subjects, verified by professors and top students.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'notes' %}" class="btn btn-primary">Browse Notes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-lightbulb feature-icon"></i>
+                    </div>
+                    <h4 class="card-title text-center">Insights</h4>
+                    <p class="card-text">Gain deep understanding of complex engineering concepts with detailed explanations.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'insights' %}" class="btn btn-warning">Explore Insights</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-pen feature-icon"></i>
+                    </div>
+                    <h4 class="card-title text-center">Handwritten Notes</h4>
+                    <p class="card-text">Access clear and detailed handwritten explanations that break down difficult concepts.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'handwritten' %}" class="btn btn-success">View Notes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-list feature-icon"></i>
+                    </div>
+                    <h4 class="card-title text-center">Syllabus</h4>
+                    <p class="card-text">Find complete curriculum and study guides for all semesters and departments to plan ahead.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'syllabus' %}" class="btn btn-info">Check Syllabus</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-project-diagram feature-icon"></i>
+                    </div>
+                    <h4 class="card-title text-center">Projects</h4>
+                    <p class="card-text">Explore engineering project documentation, implementation guides, and showcase your own work.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'projects' %}" class="btn btn-danger">View Projects</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

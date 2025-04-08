@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item active">{{ resource_name }}</li>
+                </ol>
+            </nav>
+            
+            <h2 class="mb-4">{{ resource_name }} by Department</h2>
+            <p class="text-muted mb-4">Select your department to browse all available {{ resource_name|lower }}.</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for department in departments %}
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="card department-card h-100 shadow-sm border-0 hover-card" data-department-name="{{ department.name }}">
+                    <div class="card-body text-center">
+                        <div class="dept-icon-container mb-3">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h4 class="card-title">
+                            {% if department.name == "Architecture" %}
+                                {{ department.name }}
+                            {% else %}
+                                {{ department.name }} Engineering
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-primary btn-block department-btn" data-department-id="{{ department.id }}">
+                                View {{ resource_name }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Department Semester Modal -->
+<div class="modal fade" id="semesterModal" tabindex="-1" aria-labelledby="semesterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="semesterModalLabel">Select Semester</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Please select a semester to view {{ resource_name|lower }}:</p>
+                <div id="semester-list" class="list-group">
+                    <!-- Semesters will be populated here -->
+                    <p class="text-center" id="loading-semesters">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading semesters...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .dept-icon-container {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        background-color: #3498db;
+    }
+    .dept-icon-container i {
+        font-size: 36px;
+    }
+    .department-card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .department-btn {
+        border-radius: 30px;
+        padding: 8px 16px;
+    }
+</style>
+
+<script>
+    // Add colors and icons for each department based on name
+    document.addEventListener('DOMContentLoaded', function() {
+        const departmentCards = document.querySelectorAll('.department-card');
+        
+        const deptStyles = {
+            'Aerospace': { icon: 'fas fa-plane', color: '#3498db' },
+            'Agricultural': { icon: 'fas fa-tractor', color: '#27ae60' },
+            'Automobile': { icon: 'fas fa-car', color: '#e74c3c' },
+            'Chemical': { icon: 'fas fa-flask', color: '#f39c12' },
+            'Civil': { icon: 'fas fa-hard-hat', color: '#8e44ad' },
+            'Computer': { icon: 'fas fa-laptop-code', color: '#2c3e50' },
+            'Electrical': { icon: 'fas fa-bolt', color: '#f1c40f' },
+            'Electronics Communication and Information': { icon: 'fas fa-microchip', color: '#e67e22' },
+            'Geomatics': { icon: 'fas fa-globe-americas', color: '#16a085' },
+            'Industrial': { icon: 'fas fa-industry', color: '#7f8c8d' },
+            'Mechanical': { icon: 'fas fa-cogs', color: '#34495e' },
+            'Architecture': { icon: 'fas fa-drafting-compass', color: '#9b59b6' }
+        };
+        
+        departmentCards.forEach(card => {
+            const deptName = card.getAttribute('data-department-name');
+            const iconContainer = card.querySelector('.dept-icon-container');
+            const titleElement = card.querySelector('.card-title');
+            
+            if (deptStyles[deptName]) {
+                // Set background color and icon
+                iconContainer.style.backgroundColor = deptStyles[deptName].color;
+                iconContainer.innerHTML = `<i class="${deptStyles[deptName].icon}"></i>`;
+                
+                // Also style the button to match the department color
+                const button = card.querySelector('.department-btn');
+                button.style.backgroundColor = deptStyles[deptName].color;
+                button.style.borderColor = deptStyles[deptName].color;
+            }
+        });
+        
+        // The rest of your existing JavaScript for handling clicks and the modal
+        const departmentButtons = document.querySelectorAll('.department-btn');
+        const semesterList = document.getElementById('semester-list');
+        const loadingMessage = document.getElementById('loading-semesters');
+        const semesterModal = new bootstrap.Modal(document.getElementById('semesterModal'));
+        
+        departmentButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const departmentId = this.getAttribute('data-department-id');
+                
+                // Clear previous semesters
+                semesterList.innerHTML = '';
+                loadingMessage.style.display = 'block';
+                
+                // Show the modal
+                semesterModal.show();
+                
+                fetch(`/api/departments/${departmentId}/semesters/`)
+    .then(response => response.json())
+    .then(data => {
+        loadingMessage.style.display = 'none';
+        
+        if (data.semesters && Array.isArray(data.semesters)) {
+            if (data.semesters.length === 0) {
+                semesterList.innerHTML = '<p class="text-center text-muted">No semesters available for this department.</p>';
+            } else {
+                data.semesters.forEach(semester => {
+                    const link = document.createElement('a');
+                    link.href = `/resources/${departmentId}/${semester.id}/{{ resource_type }}/`;
+                    link.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                    link.innerHTML = `
+                        <span>Semester ${semester.number}</span>
+                        <i class="fas fa-chevron-right"></i>
+                    `;
+                    semesterList.appendChild(link);
+                });
+            }
+        } else {
+            console.error('Invalid data structure:', data);
+            semesterList.innerHTML = '<p class="text-center text-danger">Error: Invalid data format</p>';
+        }
+    })
+                    .catch(error => {
+                        console.error('Error fetching semesters:', error);
+                        loadingMessage.style.display = 'none';
+                        semesterList.innerHTML = '<p class="text-center text-danger">Error loading semesters. Please try again.</p>';
+                    });
+            });
+        });
+    });
+</script>
+{% endblock %}

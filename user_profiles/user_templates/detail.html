@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{ profile_user.username }}'s Profile</h4>
+                </div>
+                <div class="card-body text-center">
+                    {% if profile_user.user_profiles_profile.profile_picture %}
+                        <img class="rounded-circle mb-3" src="{{ profile_user.user_profiles_profile.profile_picture.url }}" alt="Profile Picture" width="150" height="150">
+                    {% else %}
+                        <img class="rounded-circle mb-3" src="/static/images/default_profile.png" alt="Default Profile Picture" width="150" height="150">
+                    {% endif %}
+                    <h5>{{ profile_user.first_name }} {{ profile_user.last_name }}</h5>
+                    {% if profile_user.user_profiles_profile.bio %}
+                        <p class="text-muted">{{ profile_user.user_profiles_profile.bio }}</p>
+                    {% endif %}
+                    <p>Member since: {{ profile_user.date_joined|date:"F Y" }}</p>
+                    <p>Total Resources: {{ resources.count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User's Resources -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>{{ profile_user.username }}'s Resources</h4>
+                </div>
+                <div class="card-body">
+                    {% if resources %}
+                        <div class="row">
+                            {% for resource in resources %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        {% if resource.thumbnail %}
+                                            <img src="{{ resource.thumbnail.url }}" class="card-img-top" alt="{{ resource.title }}" style="height: 150px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="card-img-top bg-light text-center py-5">
+                                                <i class="fas fa-file-alt fa-3x text-secondary"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ resource.title }}</h5>
+                                            <p class="card-text">{{ resource.description|truncatechars:100 }}</p>
+                                            <p class="card-text"><small class="text-muted">{{ resource.get_resource_type_display }} | {{ resource.department.name }} - Semester {{ resource.semester.number }}</small></p>
+                                        </div>
+                                        <div class="card-footer bg-white">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="text-success me-2">
+                                                        <i class="fas fa-thumbs-up"></i> {{ resource.upvotes }}
+                                                    </span>
+                                                    <span class="text-danger">
+                                                        <i class="fas fa-thumbs-down"></i> {{ resource.downvotes }}
+                                                    </span>
+                                                </div>
+                                                <a href="{% url 'resource_detail' resource.id %}" class="btn btn-sm btn-primary">View Resource</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">{{ profile_user.username }} hasn't uploaded any resources yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

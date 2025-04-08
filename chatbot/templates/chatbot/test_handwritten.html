@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Handwritten Text Extraction</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h4>Test Handwritten Text Extraction</h4>
+            </div>
+            <div class="card-body">
+                <form id="pdfForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="pdfFile" class="form-label">Upload PDF with handwritten notes</label>
+                        <input class="form-control" type="file" id="pdfFile" name="pdf_file" accept=".pdf">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userQuery" class="form-label">Your Question or Instructions</label>
+                        <textarea class="form-control" id="userQuery" name="user_query" rows="3" 
+                                  placeholder="Ask a question or provide instructions about the document..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Process Document</button>
+                </form>
+                
+                <div id="loadingIndicator" class="mt-4 d-none">
+                    <p class="text-center">Processing... This may take a minute.</p>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="resultSection" class="mt-4 d-none">
+                    <h5>Response:</h5>
+                    <div class="border p-3 bg-light">
+                        <pre id="extractedText"></pre>
+                    </div>
+                </div>
+                
+                <div id="errorSection" class="mt-4 d-none">
+                    <div class="alert alert-danger">
+                        <h5>Error:</h5>
+                        <p id="errorMessage"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('pdfForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultSection = document.getElementById('resultSection');
+            const errorSection = document.getElementById('errorSection');
+            const extractedText = document.getElementById('extractedText');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide results and show loading
+            resultSection.classList.add('d-none');
+            errorSection.classList.add('d-none');
+            loadingIndicator.classList.remove('d-none');
+            
+            fetch('/chatbot/api/test-handwritten-pdf/', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Server error occurred');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingIndicator.classList.add('d-none');
+                resultSection.classList.remove('d-none');
+                extractedText.textContent = data.response || 'No response received';
+            })
+            .catch(error => {
+                loadingIndicator.classList.add('d-none');
+                errorSection.classList.remove('d-none');
+                errorMessage.textContent = error.message || 'An unknown error occurred';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

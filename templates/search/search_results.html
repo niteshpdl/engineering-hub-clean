@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Search Results for "{{ query }}"</h1>
+    
+    {% if not query %}
+        <div class="alert alert-info">Please enter a search term.</div>
+    {% else %}
+        {% if users|length == 0 and resources|length == 0 and projects|length == 0 %}
+            <div class="alert alert-warning">No results found for "{{ query }}".</div>
+        {% endif %}
+    {% endif %}
+    
+    {% if users %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Users ({{ users|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for profile in users %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ profile.image.url }}" alt="{{ profile.user.username }}" class="rounded-circle mr-3" width="50" height="50">
+                                <div class="ml-3">
+                                    <h5 class="card-title mb-0">{{ profile.user.get_full_name|default:profile.user.username }}</h5>
+                                    <p class="text-muted mb-0">@{{ profile.user.username }}</p>
+                                </div>
+                            </div>
+                            {% if profile.bio %}
+                            <p class="card-text mt-2">{{ profile.bio|truncatechars:100 }}</p>
+                            {% endif %}
+                            <div class="mt-3">
+                                <a href="{% url 'user_detail' profile.user.username %}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if resources %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h2 class="h5 mb-0">Resources ({{ resources|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for resource in resources %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ resource.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ resource.get_resource_type_display }}</h6>
+                            <p class="card-text">{{ resource.description|truncatechars:150 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary">{{ resource.department.name }}</span>
+                                    <span class="badge bg-secondary">Semester {{ resource.semester.number }}</span>
+                                </div>
+                                <a href="{% url 'resource_detail' resource.id %}" class="btn btn-sm btn-outline-success">View Resource</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if projects %}
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h2 class="h5 mb-0">Projects ({{ projects|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for project in projects %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ project.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ project.get_category_display }}</h6>
+                            <p class="card-text">{{ project.description|truncatechars:150 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">By: {{ project.author.username }}</small>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-info">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

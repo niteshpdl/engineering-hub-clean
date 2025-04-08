@@ -1,0 +1,126 @@
+{% load static %}
+<!-- Add this style section at the top of your chatbot.html file -->
+<style>
+    #eh-chatbot-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        cursor: pointer;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #eh-chatbot-toggle:hover {
+        background-color: #3367d6;
+    }
+</style>
+
+
+<!-- Chatbot widget -->
+<div class="eh-chatbot-widget">
+    <!-- IMPORTANT: Make sure there's no onclick attribute here -->
+    <button id="eh-chatbot-toggle" class="eh-chatbot-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Chat container -->
+    <div id="eh-chatbot-container" class="eh-chatbot-container" style="display: none;">
+        <div id="eh-chatbot-box" class="eh-chatbot-box">
+            <!-- Header -->
+            <div class="eh-chatbot-header">
+                <div class="eh-chatbot-title">
+                    <i class="fas fa-robot"></i>
+                    Engineering Hub
+                </div>
+                <div class="eh-chatbot-controls">
+                    <button id="eh-chatbot-menu" class="eh-chatbot-btn" title="Chat menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button id="eh-chatbot-minimize" class="eh-chatbot-btn" title="Minimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button id="eh-chatbot-expand" class="eh-chatbot-btn" title="Expand">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button id="eh-chatbot-close" class="eh-chatbot-btn" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu Panel -->
+            <div id="eh-chatbot-menu-panel" class="eh-chatbot-menu-panel" style="display: none;">
+                <div class="eh-chatbot-menu-header">
+                    <h3>Chat History</h3>
+                </div>
+                <div class="eh-chatbot-menu-content">
+                    <button id="eh-chatbot-new-chat" class="eh-chatbot-new-chat-btn">
+                        <i class="fas fa-plus"></i> New Chat
+                    </button>
+                    <div id="eh-chatbot-sessions" class="eh-chatbot-sessions">
+                        <!-- Sessions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="eh-chatbot-messages" class="eh-chatbot-messages">
+                <!-- Messages will appear here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="eh-chatbot-footer">
+                <!-- File preview area -->
+                <div id="eh-file-preview" class="eh-file-preview" style="display:none;">
+                    <i class="fas fa-file"></i>
+                    <span id="eh-file-name"></span>
+                    <button id="eh-remove-file" class="eh-remove-file" title="Remove file">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Chat input form -->
+<!-- In the chatbot form section -->
+<form id="eh-chatbot-form" class="eh-chatbot-form">
+    <div class="eh-chatbot-input-container">
+        <input type="text" id="eh-chatbot-input" placeholder="Type your message..." autocomplete="off">
+        <div class="eh-chatbot-actions">
+            <button type="button" id="eh-file-button" class="eh-upload-btn" title="Upload file">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <button type="submit" class="eh-chatbot-send" title="Send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    <input type="file" id="eh-file-upload" style="display:none;" accept=".pdf,.jpg,.jpeg,.png">
+    <input type="hidden" id="eh-session-id" name="session_id" value="">
+</form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template for typing indicator -->
+<template id="eh-typing-indicator-template">
+    <div class="eh-chatbot-message eh-bot-message">
+        <div class="eh-message-content eh-typing-indicator">
+            <div class="eh-typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- IMPORTANT: Remove any script tags with toggleChatboxDirectly or other inline JS -->

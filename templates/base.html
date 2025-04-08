@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Engineering Hub{% endblock %}</title>
+
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Chatbot CSS -->
+    <link rel="stylesheet" href="{% static 'chatbot/css/chatbot.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid px-2 px-lg-3">
+            <a class="navbar-brand" href="{% url 'home' %}">Engineering Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'notes' in request.path %}active{% endif %}" href="#"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Notes
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'notes' %}">Study Notes</a></li>
+                            <li><a class="dropdown-item" href="{% url 'handwritten' %}">Handwritten Notes</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'insights' in request.path %}active{% endif %}" href="{% url 'insights' %}">Insights</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'syllabus' in request.path %}active{% endif %}" href="{% url 'syllabus' %}">Syllabus</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'projects' in request.path %}active{% endif %}" href="{% url 'projects' %}">Projects</a>
+                    </li>
+                </ul>
+                
+                <!-- Search Form -->
+                <div class="d-flex me-2 search-form">
+                    <form class="d-flex" action="{% url 'search' %}" method="GET">
+                        <input class="form-control me-2" type="search" placeholder="Search..." name="q"
+                               aria-label="Search" value="{{ request.GET.q|default:'' }}">
+                        <button class="btn btn-sm btn-outline-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Auth Buttons -->
+                <div class="d-flex auth-buttons">
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                                    id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'upload_resource' %}">
+                                    <i class="fas fa-upload me-2"></i>Upload</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user-circle me-2"></i>Profile</a>
+                                </li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">Login</a>
+                        <a href="{% url 'register' %}" class="btn btn-sm btn-outline-success">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Engineering Hub</h5>
+                    <p>Your one-stop platform for engineering resources, notes, and projects.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-light">Home</a></li>
+                        <li><a href="{% url 'notes' %}" class="text-light">Notes</a></li>
+                        <li><a href="{% url 'projects' %}" class="text-light">Projects</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> niteshpaudel2004@gmail.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +9779849928001</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; {% now "Y" %} Engineering Hub. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Include the chatbot template -->
+    {% include 'chatbot/chatbot.html' %}
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chatbot JavaScript -->
+    <script src="{% static 'chatbot/js/chatbot.js' %}"></script>
+    
+<!-- Emergency override script for chatbot toggle -->
+<script>
+    // Only add this if the main chatbot.js fails to load
+    window.addEventListener('load', function() {
+        // Check if the main chatbot.js has already set up the event listener
+        const toggleBtn = document.getElementById('eh-chatbot-toggle');
+        if (toggleBtn && !toggleBtn._hasClickHandler) {
+            console.log("Adding emergency toggle handler");
+            toggleBtn.onclick = function(e) {
+                e.stopPropagation(); // Stop event propagation
+                console.log("Toggle button clicked via emergency handler");
+                const container = document.getElementById('eh-chatbot-container');
+                if (container) {
+                    const newDisplay = container.style.display === 'block' ? 'none' : 'block';
+                    container.style.display = newDisplay;
+                    
+                    // Also update localStorage to match the display state
+                    try {
+                        localStorage.setItem('chatbotVisible', newDisplay === 'block' ? 'true' : 'false');
+                    } catch (e) {
+                        console.warn("Failed to save chatbot state to localStorage");
+                    }
+                }
+            };
+            toggleBtn._hasClickHandler = true;
+        }
+    });
+</script>
+    
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
